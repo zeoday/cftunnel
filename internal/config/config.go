@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Version    int              `yaml:"version"`
-	Auth       AuthConfig       `yaml:"auth"`
-	Tunnel     TunnelConfig     `yaml:"tunnel"`
-	Routes     []RouteConfig    `yaml:"routes"`
+	Version     int               `yaml:"version"`
+	Auth        AuthConfig        `yaml:"auth"`
+	Tunnel      TunnelConfig      `yaml:"tunnel"`
+	Routes      []RouteConfig     `yaml:"routes"`
 	Cloudflared CloudflaredConfig `yaml:"cloudflared"`
+	SelfUpdate  SelfUpdateConfig  `yaml:"self_update"`
 }
 
 type AuthConfig struct {
@@ -37,6 +38,10 @@ type RouteConfig struct {
 type CloudflaredConfig struct {
 	Path       string `yaml:"path"`
 	AutoUpdate bool   `yaml:"auto_update"`
+}
+
+type SelfUpdateConfig struct {
+	AutoCheck bool `yaml:"auto_check"` // 启动时自动检查 cftunnel 更新
 }
 
 func Dir() string {
