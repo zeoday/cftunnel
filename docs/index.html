@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cftunnel — Cloudflare Tunnel 一键管理 CLI | 内网穿透工具</title>
+<meta name="description" content="cftunnel 是基于 Cloudflare Tunnel 的开源 CLI 工具，一条命令让 localhost 变公网域名。免费、安全、无需公网 IP，支持 macOS / Linux / Windows。">
+<meta name="keywords" content="cftunnel, cloudflare tunnel, 内网穿透, localhost, 公网域名, CLI, 开源, frp替代, ngrok替代">
+<link rel="canonical" href="https://cftunnel.qt.cool/">
+<meta property="og:title" content="cftunnel — Cloudflare Tunnel 一键管理 CLI">
+<meta property="og:description" content="一条命令让 localhost 变公网域名。免费、安全、无需公网 IP。">
+<meta property="og:url" content="https://cftunnel.qt.cool/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"cftunnel","description":"基于 Cloudflare Tunnel 的开源 CLI 内网穿透工具","url":"https://cftunnel.qt.cool","applicationCategory":"DeveloperApplication","operatingSystem":"macOS, Linux, Windows","license":"https://opensource.org/licenses/MIT","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"author":{"@type":"Organization","name":"武汉晴辰天下网络科技有限公司","url":"https://qingchencloud.com"}}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3a;--text:#e4e4ef;--text2:#8888a0;--accent:#3b82f6;--accent2:#60a5fa;--green:#22c55e;--orange:#f59e0b}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* 布局 */
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+section{padding:80px 0}
+
+/* 导航 */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:56px}
+nav .logo{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.5px}
+nav .logo span{color:var(--accent2)}
+nav .links{display:flex;gap:24px;font-size:14px}
+nav .links a{color:var(--text2);transition:color .2s}
+nav .links a:hover{color:var(--text);text-decoration:none}
+.gh-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--border);border-radius:6px;font-size:13px;color:var(--text)!important;transition:border-color .2s}
+.gh-btn:hover{border-color:var(--accent);text-decoration:none}
+
+/* Hero */
+.hero{padding:140px 0 80px;text-align:center}
+.hero h1{font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-1px;line-height:1.15;margin-bottom:16px}
+.hero h1 .highlight{background:linear-gradient(135deg,var(--accent2),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .subtitle{font-size:clamp(16px,2.5vw,20px);color:var(--text2);max-width:600px;margin:0 auto 40px}
+
+/* 终端 */
+.terminal{max-width:600px;margin:0 auto 40px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;text-align:left}
+.terminal-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.terminal-dot{width:12px;height:12px;border-radius:50%}
+.terminal-dot.r{background:#ff5f57}.terminal-dot.y{background:#febc2e}.terminal-dot.g{background:#28c840}
+.terminal-body{padding:20px;font-family:"SF Mono",Monaco,Consolas,monospace;font-size:14px;line-height:1.8}
+.terminal-body .prompt{color:var(--green)}
+.terminal-body .cmd{color:var(--text)}
+.terminal-body .output{color:var(--text2)}
+.terminal-body .url{color:var(--accent2)}
+
+/* CTA 按钮 */
+.cta-group{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;transition:all .2s;cursor:pointer;border:none}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#2563eb;text-decoration:none;color:#fff}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--accent);text-decoration:none;color:var(--text)}
+
+/* 特性卡片 */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;transition:border-color .3s}
+.feature-card:hover{border-color:var(--accent)}
+.feature-icon{font-size:28px;margin-bottom:12px}
+.feature-card h3{font-size:17px;margin-bottom:8px;font-weight:600}
+.feature-card p{font-size:14px;color:var(--text2);line-height:1.7}
+
+/* 区块标题 */
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:clamp(24px,3.5vw,36px);font-weight:700;margin-bottom:12px}
+.section-title p{color:var(--text2);font-size:16px}
+
+/* 对比表 */
+.compare-table{width:100%;border-collapse:collapse;font-size:14px}
+.compare-table th,.compare-table td{padding:14px 18px;text-align:left;border-bottom:1px solid var(--border)}
+.compare-table th{color:var(--text2);font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:.5px}
+.compare-table td:first-child{color:var(--text2)}
+.compare-table td:nth-child(2){color:var(--text2);opacity:.6}
+.compare-table td:nth-child(3){color:var(--green);font-weight:500}
+.compare-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+
+/* 安装 Tab */
+.install-tabs{display:flex;gap:0;margin-bottom:0;background:var(--surface2);border-radius:12px 12px 0 0;border:1px solid var(--border);border-bottom:none;overflow:hidden}
+.install-tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:none}
+.install-tab.active{color:var(--text);background:var(--surface);box-shadow:inset 0 -2px 0 var(--accent)}
+.install-panel{display:none;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;padding:24px}
+.install-panel.active{display:block}
+.install-panel pre{background:var(--surface2);padding:16px;border-radius:8px;overflow-x:auto;font-family:"SF Mono",Monaco,Consolas,monospace;font-size:13px;line-height:1.7}
+
+/* 快速上手 */
+.quickstart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:20px}
+.qs-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.qs-card-header{padding:20px 24px 0;font-size:15px;font-weight:600}
+.qs-card-header small{display:block;color:var(--text2);font-weight:400;font-size:13px;margin-top:4px}
+.qs-card pre{margin:16px;background:var(--surface2);padding:16px;border-radius:8px;font-family:"SF Mono",Monaco,Consolas,monospace;font-size:13px;line-height:1.8;overflow-x:auto}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:40px 0;text-align:center;color:var(--text2);font-size:13px}
+footer .links{display:flex;gap:24px;justify-content:center;margin-bottom:16px}
+
+/* 响应式 */
+@media(max-width:768px){
+  nav .links{display:none}
+  section{padding:60px 0}
+  .hero{padding:100px 0 60px}
+  .quickstart-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="container">
+  <a href="#" class="logo">cf<span>tunnel</span></a>
+  <div class="links">
+    <a href="#features">特性</a>
+    <a href="#compare">对比</a>
+    <a href="#install">安装</a>
+    <a href="#quickstart">快速上手</a>
+  </div>
+  <a href="https://github.com/qingchencloud/cftunnel" class="gh-btn" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    GitHub
+  </a>
+</div>
+</nav>
+
+<section class="hero">
+<div class="container">
+  <h1>一条命令<br><span class="highlight">localhost → 公网域名</span></h1>
+  <p class="subtitle">基于 Cloudflare Tunnel 的开源 CLI 工具，免费、安全、无需公网 IP</p>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot r"></div>
+      <div class="terminal-dot y"></div>
+      <div class="terminal-dot g"></div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="prompt">$ </span><span class="cmd">cftunnel quick 3000</span></div>
+      <div class="output">正在下载 cloudflared...</div>
+      <div class="output">cloudflared 已下载</div>
+      <div><span class="output">✔ 隧道已启动: </span><span class="url">https://portrait-liverpool-essentials.trycloudflare.com</span></div>
+    </div>
+  </div>
+
+  <div class="cta-group">
+    <a href="https://github.com/qingchencloud/cftunnel" class="btn btn-primary" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <a href="#install" class="btn btn-outline">安装</a>
+    <a href="https://linux.do/t/1636467" class="btn btn-outline" target="_blank">社区讨论</a>
+  </div>
+</div>
+</section>
+
+<section id="features">
+<div class="container">
+  <div class="section-title">
+    <h2>为什么选 cftunnel</h2>
+    <p>把 Cloudflare Tunnel 的繁琐流程封装成极简 CLI</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>免域名模式</h3>
+      <p>cftunnel quick &lt;端口&gt;，零配置生成 *.trycloudflare.com 临时公网地址，无需账户和域名</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔧</div>
+      <h3>极简操作</h3>
+      <p>init → create → add → up，4 条命令搞定自有域名穿透，DNS CNAME 自动创建和清理</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>跨平台</h3>
+      <p>macOS (Intel / Apple Silicon)、Linux (amd64 / arm64)、Windows (amd64 / arm64)，6 个平台全覆盖</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>安全免费</h3>
+      <p>基于 Cloudflare 全球网络，流量加密传输，无需公网 IP，完全免费使用</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <h3>系统服务</h3>
+      <p>cftunnel install 一条命令注册开机自启，macOS launchd / Linux systemd / Windows Service</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>AI 集成</h3>
+      <p>内置 Claude Code / OpenClaw Skills，AI 编码助手可直接帮你管理隧道</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="compare" style="background:var(--surface)">
+<div class="container">
+  <div class="section-title">
+    <h2>cftunnel vs 原生 cloudflared</h2>
+    <p>同样的 Cloudflare Tunnel，更简单的操作方式</p>
+  </div>
+  <div class="compare-wrap">
+    <table class="compare-table">
+      <thead><tr><th>操作</th><th>原生 cloudflared</th><th>cftunnel</th></tr></thead>
+      <tbody>
+        <tr><td>免域名穿透</td><td>cloudflared tunnel --url 手动操作</td><td>cftunnel quick &lt;端口&gt;</td></tr>
+        <tr><td>创建隧道</td><td>登录浏览器 + 手动配置</td><td>cftunnel create my-tunnel</td></tr>
+        <tr><td>DNS 记录</td><td>手动去 Dashboard 创建 CNAME</td><td>自动创建</td></tr>
+        <tr><td>多路由管理</td><td>手动编辑 YAML 配置</td><td>add / remove / list</td></tr>
+        <tr><td>开机自启</td><td>手动写 systemd / launchd</td><td>cftunnel install</td></tr>
+        <tr><td>清理资源</td><td>手动删隧道 + 删 DNS + 删配置</td><td>cftunnel destroy</td></tr>
+        <tr><td>自更新</td><td>无</td><td>cftunnel update</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<section id="install">
+<div class="container">
+  <div class="section-title">
+    <h2>安装</h2>
+    <p>单二进制文件，零运行时依赖</p>
+  </div>
+  <div style="max-width:640px;margin:0 auto">
+    <div class="install-tabs">
+      <button class="install-tab active" onclick="switchTab(0)">macOS / Linux</button>
+      <button class="install-tab" onclick="switchTab(1)">Windows</button>
+      <button class="install-tab" onclick="switchTab(2)">源码构建</button>
+    </div>
+    <div class="install-panel active">
+      <pre><span style="color:var(--green)">$</span> curl -fsSL https://raw.githubusercontent.com/qingchencloud/cftunnel/main/install.sh | bash</pre>
+      <p style="margin-top:12px;font-size:13px;color:var(--text2)">支持 macOS Intel / Apple Silicon、Linux amd64 / arm64</p>
+    </div>
+    <div class="install-panel">
+      <pre><span style="color:var(--green)">PS&gt;</span> irm https://raw.githubusercontent.com/qingchencloud/cftunnel/main/install.ps1 | iex</pre>
+      <p style="margin-top:12px;font-size:13px;color:var(--text2)">支持 Windows amd64 / arm64，自动添加到 PATH</p>
+    </div>
+    <div class="install-panel">
+      <pre><span style="color:var(--green)">$</span> git clone https://github.com/qingchencloud/cftunnel.git
+<span style="color:var(--green)">$</span> cd cftunnel
+<span style="color:var(--green)">$</span> make build</pre>
+      <p style="margin-top:12px;font-size:13px;color:var(--text2)">需要 Go 1.21+</p>
+    </div>
+    <p style="text-align:center;margin-top:16px;font-size:14px">
+      也可以从 <a href="https://github.com/qingchencloud/cftunnel/releases">GitHub Releases</a> 手动下载
+    </p>
+  </div>
+</div>
+</section>
+
+<section id="quickstart" style="background:var(--surface)">
+<div class="container">
+  <div class="section-title">
+    <h2>快速上手</h2>
+    <p>两种模式，按需选择</p>
+  </div>
+  <div class="quickstart-grid">
+    <div class="qs-card">
+      <div class="qs-card-header">
+        方式一：免域名模式
+        <small>零配置，临时分享和调试</small>
+      </div>
+      <pre><span style="color:var(--green)">$</span> cftunnel quick 3000
+
+<span style="color:var(--text2)">✔ 隧道已启动:</span>
+<span style="color:var(--accent2)">https://xxx-yyy-zzz.trycloudflare.com</span>
+
+<span style="color:var(--text2)"># Ctrl+C 退出，域名自动失效</span></pre>
+    </div>
+    <div class="qs-card">
+      <div class="qs-card-header">
+        方式二：自有域名模式
+        <small>固定域名，稳定持久</small>
+      </div>
+      <pre><span style="color:var(--green)">$</span> cftunnel init
+<span style="color:var(--green)">$</span> cftunnel create my-tunnel
+<span style="color:var(--green)">$</span> cftunnel add app 3000 --domain app.example.com
+<span style="color:var(--green)">$</span> cftunnel up
+
+<span style="color:var(--text2)"># app.example.com → localhost:3000</span></pre>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+  <div class="links">
+    <a href="https://github.com/qingchencloud/cftunnel" target="_blank">GitHub</a>
+    <a href="https://github.com/qingchencloud/cftunnel/releases" target="_blank">Releases</a>
+    <a href="https://linux.do/t/1636467" target="_blank">社区讨论</a>
+    <a href="https://github.com/qingchencloud/cftunnel/issues" target="_blank">反馈</a>
+  </div>
+  <p>MIT License · <a href="https://qingchencloud.com">武汉晴辰天下网络科技有限公司</a> 开源维护</p>
+</div>
+</footer>
+
+<script>
+function switchTab(i){
+  document.querySelectorAll('.install-tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.install-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+}
+</script>
+</body>
+</html>
