@@ -5,14 +5,16 @@
 ## 快速上手
 
 ```bash
-cftunnel init                                          # 初始化
+cftunnel init                                          # 配置认证
+cftunnel create my-tunnel                              # 创建隧道
 cftunnel add myapp 3000 --domain myapp.example.com     # 添加路由
 cftunnel up                                            # 启动
 ```
 
 ## 全部命令
 
-- `init [--token --account --name]` — 初始化隧道
+- `init [--token --account]` — 配置 API 认证
+- `create <名称>` — 创建隧道
 - `add <名称> <端口> --domain <域名>` — 添加路由
 - `remove <名称>` — 删除路由
 - `list` — 列出路由

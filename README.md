@@ -6,7 +6,7 @@ Cloudflare Tunnel 一键管理工具 — 3 条命令搞定内网穿透。
 
 ## 特性
 
-- **一键初始化** — 交互式向导，输入 Token 即可创建隧道
+- **分步初始化** — `init` 配置认证，`create` 创建隧道，职责清晰
 - **自动 DNS** — 添加路由时自动创建 CNAME 记录
 - **进程托管** — 自动下载 cloudflared，支持注册系统服务开机自启
 - **自动更新** — 内置版本检查和自更新
@@ -66,24 +66,30 @@ make build
 
 区域资源 → 包括 → 特定区域 → 选择你的域名
 
-### 2. 初始化
+### 2. 初始化认证
 
 ```bash
 # 交互式（推荐）
 cftunnel init
 
 # 非交互式
-cftunnel init --token <your-token> --account <account-id> --name my-tunnel
+cftunnel init --token <your-token> --account <account-id>
 ```
 
-### 3. 添加路由
+### 3. 创建隧道
+
+```bash
+cftunnel create my-tunnel
+```
+
+### 4. 添加路由
 
 ```bash
 # 将 app.example.com 指向本地 3000 端口
 cftunnel add myapp 3000 --domain app.example.com
 ```
 
-### 4. 启动隧道
+### 5. 启动隧道
 
 ```bash
 cftunnel up
@@ -97,7 +103,8 @@ cftunnel up
 
 | 命令 | 说明 |
 |------|------|
-| `cftunnel init` | 交互式初始化（支持 `--token`/`--account`/`--name`） |
+| `cftunnel init` | 配置认证信息（支持 `--token`/`--account`） |
+| `cftunnel create <名称>` | 创建隧道 |
 | `cftunnel add <名称> <端口> --domain <域名>` | 添加路由（自动创建 CNAME） |
 | `cftunnel remove <名称>` | 删除路由（自动清理 DNS） |
 | `cftunnel list` | 列出所有路由 |
@@ -138,6 +145,7 @@ cftunnel up
 
 ```bash
 cftunnel init
+cftunnel create dev-tunnel
 cftunnel add dev 3000 --domain dev.example.com
 cftunnel up
 # 现在 dev.example.com 指向 localhost:3000
@@ -203,7 +211,8 @@ cftunnel 内置了 AI 助手 Skills，让 Claude Code、OpenClaw 等 AI 编码�
 安装: curl -fsSL https://raw.githubusercontent.com/qingchencloud/cftunnel/main/install.sh | bash
 
 常用命令:
-- cftunnel init --token <TOKEN> --account <ACCOUNT_ID> --name <名称>  # 初始化
+- cftunnel init --token <TOKEN> --account <ACCOUNT_ID>  # 配置认证
+- cftunnel create <名称>  # 创建隧道
 - cftunnel add <名称> <端口> --domain <域名>  # 添加路由
 - cftunnel remove <名称>  # 删除路由
 - cftunnel up / down  # 启停隧道
@@ -212,7 +221,7 @@ cftunnel 内置了 AI 助手 Skills，让 Claude Code、OpenClaw 等 AI 编码�
 - cftunnel destroy --force  # 删除隧道
 - cftunnel install  # 注册系统服务
 
-执行命令前请确认用户已完成 cftunnel init 初始化。
+执行命令前请确认用户已完成 cftunnel init 和 cftunnel create。
 添加路由时会自动创建 DNS CNAME 记录，删除时自动清理。
 ```
 

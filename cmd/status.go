@@ -21,7 +21,7 @@ var statusCmd = &cobra.Command{
 			return err
 		}
 		if cfg.Tunnel.ID == "" {
-			fmt.Println("未初始化，请运行 cftunnel init")
+			fmt.Println("未初始化，请运行 cftunnel init && cftunnel create <名称>")
 			return nil
 		}
 		fmt.Printf("隧道: %s (%s)\n", cfg.Tunnel.Name, cfg.Tunnel.ID)

@@ -23,7 +23,7 @@ var installCmd = &cobra.Command{
 			return err
 		}
 		if cfg.Tunnel.Token == "" {
-			return fmt.Errorf("请先运行 cftunnel init")
+			return fmt.Errorf("请先运行 cftunnel init && cftunnel create <名称>")
 		}
 		binPath, err := daemon.EnsureCloudflared()
 		if err != nil {

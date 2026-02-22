@@ -31,7 +31,7 @@ var addCmd = &cobra.Command{
 			return err
 		}
 		if cfg.Tunnel.ID == "" {
-			return fmt.Errorf("请先运行 cftunnel init")
+			return fmt.Errorf("请先运行 cftunnel init && cftunnel create <名称>")
 		}
 		if cfg.FindRoute(name) != nil {
 			return fmt.Errorf("路由 %s 已存在", name)

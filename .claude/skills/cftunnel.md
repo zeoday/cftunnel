@@ -12,7 +12,8 @@ curl -fsSL https://github.com/qingchencloud/cftunnel/releases/latest/download/cf
 ## 快速上手
 
 ```bash
-cftunnel init                                          # 交互式初始化
+cftunnel init                                          # 配置认证
+cftunnel create my-tunnel                              # 创建隧道
 cftunnel add myapp 3000 --domain myapp.example.com     # 添加路由
 cftunnel up                                            # 启动隧道
 ```
@@ -21,7 +22,8 @@ cftunnel up                                            # 启动隧道
 
 | 命令 | 说明 |
 |------|------|
-| `init` | 交互式初始化（支持 `--token`/`--account`/`--name` 非交互模式） |
+| `init` | 配置认证（支持 `--token`/`--account` 非交互模式） |
+| `create <名称>` | 创建隧道 |
 | `add <名称> <端口> --domain <域名>` | 添加路由（自动创建 CNAME） |
 | `remove <名称>` | 删除路由（清理 DNS） |
 | `list` | 列出所有路由 |

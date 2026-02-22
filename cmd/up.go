@@ -22,7 +22,7 @@ var upCmd = &cobra.Command{
 			return err
 		}
 		if cfg.Tunnel.Token == "" {
-			return fmt.Errorf("请先运行 cftunnel init")
+			return fmt.Errorf("请先运行 cftunnel init && cftunnel create <名称>")
 		}
 		// 自动检查更新（非阻塞，仅提示）
 		if cfg.SelfUpdate.AutoCheck {
