@@ -1,12 +1,12 @@
 # cftunnel
 
 [![GitHub release](https://img.shields.io/github/v/release/qingchencloud/cftunnel)](https://github.com/qingchencloud/cftunnel/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/qingchencloud/cftunnel)](https://goreportcard.com/report/github.com/qingchencloud/cftunnel)
+[![Go Report Card](https://img.shields.io/badge/go%20report-A+-brightgreen?style=flat&logo=go)](https://goreportcard.com/report/github.com/qingchencloud/cftunnel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **Cloudflare Tunnel 一键管理 CLI** — 让本地项目秒变公网可访问。
 
-[为什么选 cftunnel？](#为什么选-cftunnel) · [安装](#安装) · [快速上手](#快速上手) · [命令参考](#命令参考) · [AI 助手集成](#ai-助手集成) · [交流](#交流)
+[为什么选 cftunnel？](#why) · [安装](#install) · [快速上手](#quickstart) · [命令参考](#commands) · [AI 助手集成](#ai) · [交流](#contact)
 
 > 用 AI 写了个前端页面想给客户看？本地跑着 API 想让远程同事调试？开发环境需要接收 Webhook？
 >
@@ -14,7 +14,7 @@
 
 cftunnel 把 Cloudflare Tunnel 的繁琐流程（装 cloudflared → 登录 → 创建隧道 → 写 config → 配 DNS → 注册服务）封装成 4 条命令，**5 分钟搞定内网穿透，免费、安全、无需公网 IP**。
 
-## 为什么选 cftunnel？
+<h2 id="why">为什么选 cftunnel？</h2>
 
 | 对比项 | 原生 cloudflared | cftunnel |
 |--------|-----------------|----------|
@@ -27,7 +27,7 @@ cftunnel 把 Cloudflare Tunnel 的繁琐流程（装 cloudflared → 登录 → 
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 特性
+<h2 id="features">特性</h2>
 
 - **极简操作** — `init` → `create` → `add` → `up`，4 步搞定
 - **自动 DNS** — 添加路由时自动创建 CNAME 记录，删除时自动清理
@@ -38,7 +38,7 @@ cftunnel 把 Cloudflare Tunnel 的繁琐流程（装 cloudflared → 登录 → 
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 安装
+<h2 id="install">安装</h2>
 
 ### 一键安装（推荐）
 
@@ -74,7 +74,7 @@ make build
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 快速上手
+<h2 id="quickstart">快速上手</h2>
 
 ### 1. 准备 Cloudflare API Token
 
@@ -138,7 +138,7 @@ cftunnel up
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 命令参考
+<h2 id="commands">命令参考</h2>
 
 ### 配置管理
 
@@ -182,7 +182,7 @@ cftunnel up
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 典型使用场景
+<h2 id="scenarios">典型使用场景</h2>
 
 ### 场景 1: 暴露本地开发服务
 
@@ -213,7 +213,7 @@ cftunnel list
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 配置文件
+<h2 id="config">配置文件</h2>
 
 配置存储在 `~/.cftunnel/config.yml`：
 
@@ -236,7 +236,7 @@ routes:
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## AI 助手集成
+<h2 id="ai">AI 助手集成</h2>
 
 cftunnel 内置了 AI 助手 Skills，让 Claude Code、OpenClaw 等 AI 编码助手可以直接帮你管理隧道。
 
@@ -316,20 +316,20 @@ cftunnel up
 
 <p align="right"><a href="#cftunnel">⬆ 回到顶部</a></p>
 
-## 开发
+<h2 id="dev">开发</h2>
 
 ```bash
 make build              # 本地构建
 git tag v0.x.0 && git push --tags  # 推送 tag 自动触发 GitHub Actions 发版
 ```
 
-## 交流
+<h2 id="contact">交流</h2>
 
 - 官网: [cftunnel.qt.cool](https://cftunnel.qt.cool)
 - QQ 群: [OpenClaw 交流群](https://qm.qq.com/q/qUfdR0jJVS)
 - Issues: [GitHub Issues](https://github.com/qingchencloud/cftunnel/issues)
 
-## License
+<h2 id="license">License</h2>
 
 MIT
 
