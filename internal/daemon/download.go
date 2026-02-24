@@ -137,7 +137,6 @@ func extractTgz(r io.Reader, dest string) error {
 				return err
 			}
 			os.Chmod(dest, 0755)
-			fmt.Printf("cloudflared 已下载到 %s\n", dest)
 			return nil
 		}
 	}
