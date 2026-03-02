@@ -73,12 +73,28 @@ var addCmd = &cobra.Command{
 			return err
 		}
 
-		// 创建 CNAME
+		// 检查 DNS 记录是否已存在
 		target := cfg.Tunnel.ID + ".cfargotunnel.com"
-		fmt.Printf("正在创建 DNS 记录 %s → %s\n", addDomain, target)
-		recordID, err := client.CreateCNAME(ctx, zone.ID, addDomain, target)
+		existingRecordID, err := client.FindDNSRecord(ctx, zone.ID, addDomain)
 		if err != nil {
 			return err
+		}
+
+		var recordID string
+		if existingRecordID != "" {
+			// 记录已存在,更新
+			fmt.Printf("DNS 记录已存在,正在更新 %s → %s\n", addDomain, target)
+			if err := client.UpdateCNAME(ctx, zone.ID, existingRecordID, addDomain, target); err != nil {
+				return err
+			}
+			recordID = existingRecordID
+		} else {
+			// 记录不存在,创建
+			fmt.Printf("正在创建 DNS 记录 %s → %s\n", addDomain, target)
+			recordID, err = client.CreateCNAME(ctx, zone.ID, addDomain, target)
+			if err != nil {
+				return err
+			}
 		}
 
 		// 构建路由配置
