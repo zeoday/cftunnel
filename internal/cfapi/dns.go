@@ -36,3 +36,40 @@ func (c *Client) DeleteDNSRecord(ctx context.Context, zoneID, recordID string) e
 	}
 	return nil
 }
+
+// FindDNSRecord 查找指定域名的 DNS 记录
+func (c *Client) FindDNSRecord(ctx context.Context, zoneID, name string) (string, error) {
+	records, err := c.api.DNS.Records.List(ctx, dns.RecordListParams{
+		ZoneID: cf.F(zoneID),
+		Name: cf.F(dns.RecordListParamsName{
+			Exact: cf.F(name),
+		}),
+	})
+	if err != nil {
+		return "", fmt.Errorf("查询 DNS 记录失败: %w", err)
+	}
+	for _, r := range records.Result {
+		if r.Name == name {
+			return r.ID, nil
+		}
+	}
+	return "", nil // 未找到
+}
+
+// UpdateCNAME 更新 CNAME 记录
+func (c *Client) UpdateCNAME(ctx context.Context, zoneID, recordID, name, target string) error {
+	_, err := c.api.DNS.Records.Update(ctx, recordID, dns.RecordUpdateParams{
+		ZoneID: cf.F(zoneID),
+		Body: dns.CNAMERecordParam{
+			Name:    cf.F(name),
+			Content: cf.F(target),
+			Type:    cf.F(dns.CNAMERecordTypeCNAME),
+			TTL:     cf.F(dns.TTL(1)),
+			Proxied: cf.F(true),
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("更新 CNAME 记录失败: %w", err)
+	}
+	return nil
+}
